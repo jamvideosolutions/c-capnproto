@@ -71,10 +71,6 @@ static struct node *find_node(uint64_t id) {
 	while (s && s->n.id != id) {
 		s = (struct node*) s->hdr.link[s->n.id < id];
 	}
-	if (s == NULL) {
-		fprintf(stderr, "cant find node with id 0x%x%x\n", (uint32_t) (id >> 32), (uint32_t) id);
-		exit(2);
-	}
 	return s;
 }
 
