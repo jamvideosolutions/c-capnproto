@@ -21,7 +21,7 @@ capnp_DATA = compiler/c.capnp
 AM_CPPFLAGS = -I${srcdir}/lib
 
 lib_LTLIBRARIES += libcapnp_c.la
-libcapnp_c_la_LDFLAGS = -version-info 0:0:0
+libcapnp_c_la_LDFLAGS = -version-info 1:0:0
 libcapnp_c_la_SOURCES = \
 	lib/capn-malloc.c \
 	lib/capn-stream.c \
