@@ -298,13 +298,13 @@ capn_write_mem(struct capn *c, uint8_t *p, size_t sz, int packed)
 	return headersz+datasz;
 }
 
-static int _write_fd(ssize_t (*write_fd)(int fd, void *p, size_t count), int fd, void *p, size_t count)
+static int _write_fd(ssize_t (*write_fd)(int fd, void *p, size_t count, void *user), int fd, void *p, size_t count, void *user)
 {
 	ssize_t ret;
 	size_t sent = 0;
 
 	while (sent < count) {
-		ret = write_fd(fd, ((uint8_t*)p)+sent, count-sent);
+		ret = write_fd(fd, ((uint8_t*)p)+sent, count-sent, user);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EINTR)
 				continue;
@@ -317,7 +317,7 @@ static int _write_fd(ssize_t (*write_fd)(int fd, void *p, size_t count), int fd,
 	return 0;
 }
 
-int capn_write_fd(struct capn *c, ssize_t (*write_fd)(int fd, void *p, size_t count), int fd, int packed)
+int capn_write_fd(struct capn *c, ssize_t (*write_fd)(int fd, void *p, size_t count, void *user), int fd, int packed, void *user)
 {
 	unsigned char buf[4096];
 	struct capn_segment *seg;
@@ -362,7 +362,7 @@ int capn_write_fd(struct capn *c, ssize_t (*write_fd)(int fd, void *p, size_t co
 		p = buf;
 	}
 
-	ret = _write_fd(write_fd, fd, p, headersz);
+	ret = _write_fd(write_fd, fd, p, headersz, user);
 	if (ret < 0)
 		return -1;
 
@@ -384,7 +384,7 @@ int capn_write_fd(struct capn *c, ssize_t (*write_fd)(int fd, void *p, size_t co
 			p = (uint8_t*)seg->data;
 			bufsz = seg->len;
 		}
-		ret = _write_fd(write_fd, fd, p, bufsz);
+		ret = _write_fd(write_fd, fd, p, bufsz, user);
 		if (ret < 0)
 			return -1;
 		datasz += bufsz;
