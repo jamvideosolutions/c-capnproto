@@ -319,7 +319,7 @@ static int _write_fd(ssize_t (*write_fd)(int fd, void *p, size_t count, void *us
 
 int capn_write_fd(struct capn *c, ssize_t (*write_fd)(int fd, void *p, size_t count, void *user), int fd, int packed, void *user)
 {
-	unsigned char buf[4096];
+	unsigned char buf[4096] = {};
 	struct capn_segment *seg;
 	struct capn_ptr root;
 	uint32_t headerlen;
